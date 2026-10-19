@@ -88,3 +88,15 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--green);outline-o
 .choice input:focus-visible+span{outline:2px solid var(--green);outline-offset:2px}
 fieldset.invalid .choice span{border-color:var(--err);background:#fff6f6}
 @media(max-width:480px){.choice{grid-template-columns:1fr}}
+.est-pop{position:fixed;left:50%;bottom:88px;z-index:20;width:min(92vw,360px);transform:translate(-50%,24px) scale(.96);opacity:0;pointer-events:none;background:#fff;border:2px solid var(--green);border-radius:16px;padding:12px 16px;box-shadow:0 10px 30px rgba(31,122,44,.25);transition:opacity .2s,transform .25s cubic-bezier(.2,.9,.3,1.3);cursor:pointer;text-align:center}
+.est-pop.show{opacity:1;transform:translate(-50%,0) scale(1);pointer-events:auto}
+.est-pop::after{content:"";position:absolute;left:50%;bottom:-9px;width:14px;height:14px;background:#fff;border-right:2px solid var(--green);border-bottom:2px solid var(--green);transform:translateX(-50%) rotate(45deg)}
+.pop-item{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pop-main{display:flex;align-items:baseline;justify-content:center;gap:10px;margin:2px 0}
+.pop-main span{font-size:13px;font-weight:700;color:var(--green-d)}
+.pop-total{font-size:30px;font-weight:900;color:var(--green-d);line-height:1.2}
+.pop-count{font-size:12px;color:var(--muted)}
+#total.bump{animation:bump .45s ease}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18);color:#ff7043}100%{transform:scale(1)}}
+#total{display:inline-block;transform-origin:left center}
+@media(prefers-reduced-motion:reduce){.est-pop{transition:none}#total.bump{animation:none}}

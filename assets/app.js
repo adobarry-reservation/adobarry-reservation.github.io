@@ -147,7 +147,38 @@
 
   function esc(s) { return String(s || "").replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
-  $$("select.qty").forEach(function (s) { s.addEventListener("change", render); });
+  $$("select.qty").forEach(function (s) {
+    s.addEventListener("change", function () { var est = render(); showEstimatePop(s, est); });
+  });
+
+  // ---------- 見積額ポップアップ ----------
+  var popTimer = null;
+  function showEstimatePop(sel, est) {
+    var pop = $("#estPop");
+    if (!pop) return;
+    var q = parseInt(sel.value, 10) || 0;
+    var unit = sel.dataset.unit != null ? sel.dataset.unit : "台";
+    var panel = sel.closest(".panel");
+    var cat = panel ? "【" + panel.dataset.cat + "】" : "";
+    var what = sel.classList.contains("quote")
+      ? (q ? "床：見積もり希望" : "床：なし")
+      : sel.dataset.name + "：" + (q ? q + unit : "なし");
+    $(".pop-item", pop).textContent = cat + what;
+    var hasFrom = est.items.some(function (i) { return i.from; });
+    $(".pop-total", pop).textContent = yen(est.total) + (hasFrom ? "〜" : "");
+    $(".pop-count", pop).textContent = est.items.length ? "選択中 " + est.items.length + "項目" : "まだ何も選択されていません";
+    pop.classList.remove("show");
+    void pop.offsetWidth; // アニメーションをやり直す
+    pop.classList.add("show");
+    var t = $("#total");
+    t.classList.remove("bump"); void t.offsetWidth; t.classList.add("bump");
+    clearTimeout(popTimer);
+    popTimer = setTimeout(function () { pop.classList.remove("show"); }, 2800);
+  }
+  (function () {
+    var pop = $("#estPop");
+    if (pop) pop.addEventListener("click", function () { pop.classList.remove("show"); $("#summary").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  })();
 
   // ---------- 郵便番号 → 住所 ----------
   $("#zipLookup").addEventListener("click", function () {
