@@ -84,7 +84,7 @@ function doPost(e) {
     `■お名前\n${p.name}\n\n■電話\n${p.tel}\n\n■メール\n${p.email}\n\n■住所\n〒${p.zip} ${p.address}\n\n` +
     `■ご希望日時\n第1希望：${p.wish1}\n第2希望：${p.wish2}\n第3希望：${p.wish3}\n\n` +
     `■内訳\n${p.items}\n合計（税込・概算）：${totalText}\n\n` +
-    `■エアコン情報\n${p.aircon || "-"}\n\n■駐車スペース\n${p.parking || "-"}\n\n` +
+    `■エアコン情報\n${p.aircon || "-"}\n\n■お住まいのタイプ\n${p.housing || "-"}\n\n■駐車スペース\n${p.parking || "-"}\n\n` +
     `■支払方法\n${p.payment || "-"}\n\n■当店のご利用\n${p.visit || "-"}\n\n■ペット\n${p.pet || "-"}\n\n` +
     `■紹介コード\n${p.referral || "-"}\n\n■備考\n${p.notes || "-"}\n`;
 
@@ -141,8 +141,17 @@ function buildRow_(p, sheet) {
   v["紹介コード"] = text_(referral);
   v["紹介料(20%)"] = referral ? Math.round(total * REFERRAL_RATE) : "";
   v["紹介の判定"] = referral ? "紹介あり（要確認）" : "紹介なし";
-  v["住居タイプ"] = housing.type;
-  v["住居タイプ根拠"] = housing.reason;
+  // お客様が選んだ住居タイプを優先し、住所からの推定と食い違う場合は根拠欄に残す
+  const chosen = String(p.housing || "").trim();
+  if (chosen) {
+    v["住居タイプ"] = chosen;
+    const mismatch = (chosen === "戸建て" && housing.type === "集合住宅") ||
+                     (chosen === "マンション・アパート" && housing.type !== "集合住宅");
+    v["住居タイプ根拠"] = "お客様の選択" + (mismatch ? `（住所からの推定：${housing.type}／${housing.reason}）` : "");
+  } else {
+    v["住居タイプ"] = housing.type;
+    v["住居タイプ根拠"] = housing.reason;
+  }
   v["重複チェック"] = duplicate_(sheet, p.tel);
   Object.keys(QTY_COLUMNS).forEach((k) => { v[QTY_COLUMNS[k]] = num(k) || ""; });
   v["メニュー"] = p.categories;
