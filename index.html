@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>エアコンクリーニング ご予約 | アドバリー</title>
+<meta name="description" content="アドバリーのエアコンクリーニング。料金をその場で確認して、そのままご予約いただけます。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="https://adobarry.com/">アドバリー</a>
+    <span class="hours">営業時間 8:00〜18:00</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>エアコンクリーニング ご予約</h1>
+  <p class="lead">台数とオプションを選ぶと料金がその場でわかります。そのままご予約までお進みください。</p>
+
+  <form id="reserveForm" novalidate>
+    <!-- ① 台数 -->
+    <section class="card">
+      <h2><span class="num">1</span>エアコンの台数</h2>
+      <div class="grid">
+        <label class="row">
+          <span class="row-name">通常タイプ<small>7,500円／台</small></span>
+          <select name="normal" data-price="7500" class="qty"></select>
+        </label>
+        <label class="row">
+          <span class="row-name">お掃除機能付きタイプ<small>14,000円／台</small></span>
+          <select name="cleaning" data-price="14000" class="qty"></select>
+        </label>
+      </div>
+      <p class="note">※通常タイプとお掃除機能付きタイプをそれぞれ選択してください。</p>
+    </section>
+
+    <!-- ② セット -->
+    <section class="card">
+      <h2><span class="num">2</span>人気セット</h2>
+      <div class="grid">
+        <label class="row">
+          <span class="row-name"><em class="badge">No.1</em>室外機＋防カビ抗菌<small>＋5,000円／台</small></span>
+          <select name="set1" data-price="5000" class="qty opt"></select>
+        </label>
+        <label class="row">
+          <span class="row-name"><em class="badge">No.2</em>室外機＋防カビ抗菌＋ドレンホース<small>＋7,000円／台</small></span>
+          <select name="set2" data-price="7000" class="qty opt"></select>
+        </label>
+      </div>
+    </section>
+
+    <!-- ③ オプション -->
+    <section class="card">
+      <h2><span class="num">3</span>その他オプション</h2>
+      <div class="grid">
+        <label class="row"><span class="row-name">室外機<small>＋5,000円／台</small></span><select name="outdoor" data-price="5000" class="qty opt"></select></label>
+        <label class="row"><span class="row-name">ドレンホース<small>＋2,500円／台</small></span><select name="drain" data-price="2500" class="qty opt"></select></label>
+        <label class="row"><span class="row-name">防カビ抗菌<small>＋3,000円／台</small></span><select name="antimold" data-price="3000" class="qty opt"></select></label>
+        <label class="row"><span class="row-name">防虫キャップ<small>＋1,000円／台</small></span><select name="cap" data-price="1000" class="qty opt"></select></label>
+      </div>
+      <p class="note">※各セット・オプションは施工する台数を個別に選択できます。</p>
+      <p class="warn" id="optWarn" hidden></p>
+    </section>
+
+    <!-- ④ 予約情報 -->
+    <section class="card" id="booking">
+      <h2><span class="num">4</span>ご予約情報</h2>
+
+      <div class="field">
+        <label for="name">お名前<b class="req">必須</b></label>
+        <input id="name" name="name" autocomplete="name" required placeholder="例）山田 太郎">
+      </div>
+
+      <div class="field">
+        <label for="zip">郵便番号<b class="req">必須</b></label>
+        <div class="inline">
+          <input id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" required placeholder="例）1234567" maxlength="8">
+          <button type="button" class="btn-sub" id="zipLookup">住所を自動入力</button>
+        </div>
+        <small class="status" id="zipStatus"></small>
+      </div>
+
+      <div class="field">
+        <label for="address">住所<b class="req">必須</b></label>
+        <input id="address" name="address" autocomplete="street-address" required placeholder="都道府県・市区町村・番地・建物名・部屋番号">
+      </div>
+
+      <div class="field two">
+        <div>
+          <label for="tel">電話番号<b class="req">必須</b></label>
+          <input id="tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" required placeholder="例）090-1234-5678">
+        </div>
+        <div>
+          <label for="email">メールアドレス<b class="req">必須</b></label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="例）name@example.com">
+        </div>
+      </div>
+
+      <fieldset class="field dates">
+        <legend>ご希望日時<b class="req">必須</b></legend>
+        <div class="date-row" data-n="1"><span>第一希望</span><input type="date" name="date1" required><select name="time1" required></select></div>
+        <div class="date-row" data-n="2"><span>第二希望</span><input type="date" name="date2" required><select name="time2" required></select></div>
+        <div class="date-row" data-n="3"><span>第三希望</span><input type="date" name="date3" required><select name="time3" required></select></div>
+        <small class="hint">時間は作業スタッフの到着時間です。</small>
+      </fieldset>
+
+      <div class="field">
+        <label for="parking">駐車スペース<b class="req">必須</b></label>
+        <select id="parking" name="parking" required>
+          <option value="">選択してください</option>
+          <option>駐車スペースあり</option>
+          <option>自家用車との入れ替えで対応可能</option>
+          <option>近隣に有料駐車場あり</option>
+          <option>駐車スペースなし・不明</option>
+        </select>
+        <small class="hint">近隣の商業施設等の駐車場はご利用者専用のためお断りしております。有料駐車場を利用した場合、駐車料金を別途ご請求する場合があります。</small>
+      </div>
+
+      <div class="field">
+        <label>エアコン情報<span class="opt-label">任意</span></label>
+        <small class="hint">選択した台数分、設置場所・メーカーなどをご入力いただけます。</small>
+        <div id="unitList" class="unit-list"><p class="empty">① で台数を選ぶと入力欄が表示されます。</p></div>
+      </div>
+
+      <div class="field three">
+        <div>
+          <label for="payment">お支払い方法</label>
+          <select id="payment" name="payment"><option value="">選択してください</option><option>現金</option><option>クレジットカード</option><option>PayPay</option></select>
+        </div>
+        <div>
+          <label for="visit">当店のご利用</label>
+          <select id="visit" name="visit"><option value="">選択してください</option><option>初めて</option><option>リピーター</option></select>
+        </div>
+        <div>
+          <label for="pet">ペット</label>
+          <select id="pet" name="pet"><option value="">選択してください</option><option>なし</option><option>あり</option></select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="notes">備考・ご要望</label>
+        <textarea id="notes" name="notes" rows="4" placeholder="エアコンの設置状況など、ご要望がございましたらご記入ください"></textarea>
+      </div>
+
+      <!-- スパム対策（人には見えない） -->
+      <div class="hp" aria-hidden="true"><label>会社名<input name="company" tabindex="-1" autocomplete="off"></label></div>
+
+      <label class="agree">
+        <input type="checkbox" name="agree" id="agree" required>
+        <span>表示金額は概算であり、最終的な料金は作業前にスタッフが確認のうえ確定することに同意します。</span>
+      </label>
+    </section>
+
+    <!-- 確認・送信 -->
+    <section class="card summary" id="summary">
+      <h2>ご予約内容の確認</h2>
+      <ul id="lineItems" class="line-items"><li class="empty">まだ何も選択されていません</li></ul>
+      <p class="disclaimer">こちらは【概算のご参考金額】です。実際の金額は作業前にスタッフがご確認します。追加費用が発生する場合は必ず事前にご説明いたします。</p>
+      <button type="submit" class="btn-main" id="submitBtn">この内容で予約を送信する</button>
+      <p class="status" id="sendStatus" role="status"></p>
+    </section>
+  </form>
+
+  <section class="card done" id="done" hidden>
+    <h2>ご予約を受け付けました</h2>
+    <p>ありがとうございます。内容を確認のうえ、担当スタッフより日程確定のご連絡をいたします。</p>
+    <p class="muted">受付番号：<strong id="doneId"></strong></p>
+    <div class="line-box">
+      <p><strong>写真・型番を送る場合はLINEが便利です</strong><br>エアコン本体や型番シールの写真をLINEでお送りいただけると、当日の作業がスムーズです。</p>
+      <a class="btn-line" id="lineLink" href="#" target="_blank" rel="noopener">LINEで写真を送る</a>
+    </div>
+  </section>
+</main>
+
+<!-- 画面下に固定の合計バー -->
+<div class="totalbar" id="totalbar">
+  <div class="wrap">
+    <div><span class="tb-label">現在のお見積り（税込・概算）</span><strong id="total">0円</strong></div>
+    <a href="#booking" class="tb-btn" id="toBooking">予約に進む</a>
+  </div>
+</div>
+
+<footer class="site-footer"><div class="wrap">© アドバリー</div></footer>
+
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
