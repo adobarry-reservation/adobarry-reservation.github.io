@@ -50,7 +50,38 @@
     return (parseInt(form.normal.value, 10) || 0) + (parseInt(form.cleaning.value, 10) || 0);
   }
 
+  // ②③のオプションは①のエアコン台数までしか選べないようにする
+  function limitOptions() {
+    var u = units();
+    var adjusted = [];
+    $$("select.qty.opt").forEach(function (sel) {
+      Array.prototype.forEach.call(sel.options, function (o) {
+        var over = parseInt(o.value, 10) > u;
+        o.disabled = over;
+        o.hidden = over;
+      });
+      if ((parseInt(sel.value, 10) || 0) > u) {
+        sel.value = String(u);
+        var n = sel.closest(".row").querySelector(".row-name").childNodes;
+        adjusted.push(Array.prototype.filter.call(n, function (x) { return x.nodeType === 3; })
+          .map(function (x) { return x.textContent.trim(); }).join(""));
+      }
+      sel.disabled = u === 0;
+    });
+    var warn = $("#optWarn");
+    if (u === 0) {
+      warn.hidden = false;
+      warn.textContent = "オプションは、① でエアコンの台数を選ぶと選択できます。";
+    } else if (adjusted.length) {
+      warn.hidden = false;
+      warn.textContent = "エアコンの台数（" + u + "台）に合わせて「" + adjusted.join("」「") + "」を" + u + "台に変更しました。";
+    } else {
+      warn.hidden = true;
+    }
+  }
+
   function render() {
+    limitOptions();
     var items = getItems();
     var total = items.reduce(function (s, i) { return s + i.subtotal; }, 0);
     $("#total").textContent = yen(total);
@@ -62,15 +93,7 @@
         }).join("") + '<li class="sum"><span>合計（税込・概算）</span><span>' + yen(total) + "</span></li>"
       : '<li class="empty">まだ何も選択されていません</li>';
 
-    // オプション台数がエアコン台数を超えていないか
     var u = units();
-    var over = items.filter(function (i) { return i.isOpt && i.qty > u; });
-    var warn = $("#optWarn");
-    if (over.length) {
-      warn.hidden = false;
-      warn.textContent = "「" + over.map(function (i) { return i.name; }).join("」「") + "」の台数がエアコンの台数（" + u + "台）より多くなっています。";
-    } else { warn.hidden = true; }
-
     renderUnits(u);
     return { items: picked, total: total, units: u };
   }
@@ -140,7 +163,6 @@
     e.preventDefault();
     var est = render();
     if (!est.units) return fail("① でエアコンの台数を選択してください。", form.normal);
-    if (!$("#optWarn").hidden) return fail("オプションの台数がエアコンの台数を超えています。ご確認ください。", $("#optWarn"));
 
     var required = $$("[required]", form);
     for (var i = 0; i < required.length; i++) {
