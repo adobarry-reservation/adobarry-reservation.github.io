@@ -15,7 +15,7 @@ const COLUMNS = [
   ["id", "受付番号"], ["submittedAt", "受付日時"], ["name", "お名前"], ["zip", "郵便番号"],
   ["address", "住所"], ["tel", "電話番号"], ["email", "メール"],
   ["wish1", "第一希望"], ["wish2", "第二希望"], ["wish3", "第三希望"],
-  ["units", "台数"], ["items", "内訳"], ["total", "概算合計(円)"],
+  ["categories", "メニュー"], ["units", "エアコン台数"], ["items", "内訳"], ["total", "概算合計(円)"], ["totalNote", "合計の注記"],
   ["aircon", "エアコン情報"], ["parking", "駐車スペース"], ["payment", "支払方法"],
   ["visit", "利用"], ["pet", "ペット"], ["notes", "備考"]
 ];
@@ -38,7 +38,7 @@ function doPost(e) {
   MailApp.sendEmail({
     to: SHOP_EMAIL,
     replyTo: p.email || SHOP_EMAIL,
-    subject: `【新規予約】${p.name || ""} 様（${p.units || "?"}台・${Number(p.total || 0).toLocaleString()}円）`,
+    subject: `【新規予約】${p.name || ""} 様（${p.categories || ""}・${Number(p.total || 0).toLocaleString()}円${p.totalNote ? "〜" : ""}）`,
     body: body
   });
 
@@ -52,7 +52,7 @@ function doPost(e) {
         `${p.name} 様\n\nこの度は${SHOP_NAME}にご予約いただき、ありがとうございます。\n` +
         `以下の内容で受け付けました。担当スタッフより日程確定のご連絡をいたします。\n\n` +
         `受付番号：${p.id}\n第一希望：${p.wish1}\n第二希望：${p.wish2}\n第三希望：${p.wish3}\n\n` +
-        `【ご依頼内容】\n${p.items}\n概算合計：${Number(p.total || 0).toLocaleString()}円（税込）\n\n` +
+        `【ご依頼内容】\n${p.items}\n概算合計：${Number(p.total || 0).toLocaleString()}円${p.totalNote ? "〜" : ""}（税込）\n\n` +
         `※表示金額は概算です。最終的な料金は作業前にスタッフが確認のうえ確定します。\n` +
         `　追加費用が発生する場合は必ず事前にご説明いたします。\n\n` +
         `${SHOP_NAME}｜営業時間 8:00〜18:00\n`
