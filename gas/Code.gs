@@ -34,7 +34,9 @@ function doPost(e) {
   lock.waitLock(10000);
   try {
     const sheet = getSheet_();
-    sheet.appendRow(COLUMNS.map(([k]) => p[k] || ""));
+    // 電話番号・郵便番号の先頭の0が消えないよう文字列として保存
+    const TEXT_KEYS = ["zip", "tel"];
+    sheet.appendRow(COLUMNS.map(([k]) => TEXT_KEYS.includes(k) && p[k] ? "'" + p[k] : (p[k] || "")));
   } finally {
     lock.releaseLock();
   }
