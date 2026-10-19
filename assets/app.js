@@ -260,7 +260,7 @@
       aircon: unitsInfo,
       notes: form.notes.value,
       referral: form.referral ? form.referral.value.trim() : "",
-      housing: (form.querySelector('input[name="housing"]:checked') || {}).value || "",
+      housing: form.housing ? form.housing.value : "",
       date1: form.date1.value, date2: form.date2.value, date3: form.date3.value,
       time1: form.time1.value, time2: form.time2.value, time3: form.time3.value,
       company: form.company.value // スパム対策（空のはず）
