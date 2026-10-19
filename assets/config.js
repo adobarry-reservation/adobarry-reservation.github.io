@@ -2,7 +2,7 @@
 window.ADOBARRY_CONFIG = {
   // Google Apps Script（gas/Code.gs）を「ウェブアプリ」として公開したURLを貼り付けてください。
   // 空のままだと送信はテストモード（実際には送られません）になります。
-  ENDPOINT: "",
+  ENDPOINT: "https://script.google.com/macros/s/AKfycbyFqIARIvQHy1d6SlHr-whyYykNJM12X9qkPU1aP_h34sEf6LsX5Riz9__A2l7-8XfbqA/exec",
 
   // 予約完了画面に出す LINE 公式アカウントのURL（例: https://lin.ee/xxxxxxx）
   LINE_URL: "",
