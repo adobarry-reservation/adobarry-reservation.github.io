@@ -8,9 +8,12 @@
 
   // ---------- 台数セレクトを生成 ----------
   $$("select.qty").forEach(function (sel) {
-    for (var i = 0; i <= (C.MAX_QTY || 10); i++) {
+    var max = parseInt(sel.dataset.max, 10) || C.MAX_QTY || 10;
+    var unit = sel.dataset.unit != null ? sel.dataset.unit : "台";
+    for (var i = 0; i <= max; i++) {
       var o = document.createElement("option");
-      o.value = i; o.textContent = i === 0 ? "なし" : i + "台";
+      o.value = i;
+      o.textContent = i === 0 ? "なし" : (sel.classList.contains("quote") ? "見積もり希望" : i + unit);
       sel.appendChild(o);
     }
   });
@@ -31,7 +34,7 @@
   var params = new URLSearchParams(location.search);
   $$("select.qty").forEach(function (sel) {
     var v = parseInt(params.get(sel.name), 10);
-    if (v >= 0 && v <= (C.MAX_QTY || 10)) sel.value = String(v);
+    if (v >= 0 && v <= (parseInt(sel.dataset.max, 10) || 10)) sel.value = String(v);
   });
 
   // ---------- 計算 ----------
@@ -39,10 +42,12 @@
     return $$("select.qty").map(function (sel) {
       var q = parseInt(sel.value, 10) || 0;
       var price = parseInt(sel.dataset.price, 10);
-      var label = sel.closest(".row").querySelector(".row-name").childNodes;
-      var name = Array.prototype.filter.call(label, function (n) { return n.nodeType === 3; })
-        .map(function (n) { return n.textContent.trim(); }).join("");
-      return { key: sel.name, name: name, qty: q, price: price, subtotal: q * price, isOpt: sel.classList.contains("opt") };
+      var panel = sel.closest(".panel");
+      return {
+        key: sel.name, name: sel.dataset.name, cat: panel ? panel.dataset.cat : "", tab: panel ? panel.dataset.panel : "",
+        unit: sel.dataset.unit != null ? sel.dataset.unit : "台", qty: q, price: price, subtotal: q * price,
+        from: sel.hasAttribute("data-from"), quote: sel.classList.contains("quote"), isOpt: sel.classList.contains("opt")
+      };
     });
   }
 
@@ -62,9 +67,7 @@
       });
       if ((parseInt(sel.value, 10) || 0) > u) {
         sel.value = String(u);
-        var n = sel.closest(".row").querySelector(".row-name").childNodes;
-        adjusted.push(Array.prototype.filter.call(n, function (x) { return x.nodeType === 3; })
-          .map(function (x) { return x.textContent.trim(); }).join(""));
+        adjusted.push(sel.dataset.name);
       }
       sel.disabled = u === 0;
     });
@@ -84,14 +87,21 @@
     limitOptions();
     var items = getItems();
     var total = items.reduce(function (s, i) { return s + i.subtotal; }, 0);
-    $("#total").textContent = yen(total);
-
     var picked = items.filter(function (i) { return i.qty > 0; });
+    var hasFrom = picked.some(function (i) { return i.from; });
+    var totalText = yen(total) + (hasFrom ? "〜" : "");
+    $("#total").textContent = totalText;
     $("#lineItems").innerHTML = picked.length
       ? picked.map(function (i) {
-          return "<li><span>" + i.name + " × " + i.qty + "台</span><span>" + yen(i.subtotal) + "</span></li>";
-        }).join("") + '<li class="sum"><span>合計（税込・概算）</span><span>' + yen(total) + "</span></li>"
+          return "<li><span>" + lineLabel(i) + "</span><span>" + lineAmount(i) + "</span></li>";
+        }).join("") + '<li class="sum"><span>合計（税込・概算）</span><span>' + totalText + "</span></li>"
       : '<li class="empty">まだ何も選択されていません</li>';
+
+    // タブに選択数を表示
+    $$(".tab").forEach(function (t) {
+      var n = picked.filter(function (i) { return i.tab === t.dataset.tab; }).length;
+      $(".tab-count", t).textContent = n ? n : "";
+    });
 
     var u = units();
     renderUnits(u);
@@ -107,7 +117,7 @@
         place: $("[name=place]", el).value, maker: $("[name=maker]", el).value, model: $("[name=model]", el).value
       };
     });
-    if (!u) { box.innerHTML = '<p class="empty">① で台数を選ぶと入力欄が表示されます。</p>'; return; }
+    if (!u) { box.innerHTML = '<p class="empty">エアコンの台数を選ぶと入力欄が表示されます。</p>'; return; }
     var html = "";
     for (var i = 1; i <= u; i++) {
       var c = unitCache[i] || {};
@@ -118,6 +128,23 @@
     }
     box.innerHTML = html;
   }
+  function lineLabel(i) {
+    return "【" + i.cat + "】" + i.name + (i.quote ? "" : " × " + i.qty + i.unit);
+  }
+  function lineAmount(i) {
+    return i.quote ? "別途見積もり" : yen(i.subtotal) + (i.from ? "〜" : "");
+  }
+
+  // ---------- タブ切替 ----------
+  function showTab(name) {
+    $$(".tab").forEach(function (t) { t.setAttribute("aria-selected", String(t.dataset.tab === name)); });
+    $$(".panel").forEach(function (p) { p.hidden = p.dataset.panel !== name; });
+  }
+  $$(".tab").forEach(function (t) {
+    t.addEventListener("click", function () { showTab(t.dataset.tab); });
+  });
+  if (params.get("tab") && $('.tab[data-tab="' + params.get("tab") + '"]')) showTab(params.get("tab"));
+
   function esc(s) { return String(s || "").replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
   $$("select.qty").forEach(function (s) { s.addEventListener("change", render); });
@@ -143,10 +170,9 @@
 
   // ---------- 予約に進むボタン ----------
   $("#toBooking").addEventListener("click", function (e) {
-    if (!units()) {
+    if (!getItems().some(function (i) { return i.qty > 0; })) {
       e.preventDefault();
-      form.normal.focus();
-      form.normal.scrollIntoView({ behavior: "smooth", block: "center" });
+      $(".tabs").scrollIntoView({ behavior: "smooth", block: "start" });
     }
   });
 
@@ -162,7 +188,10 @@
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     var est = render();
-    if (!est.units) return fail("① でエアコンの台数を選択してください。", form.normal);
+    if (!est.items.length) {
+      $(".tabs").scrollIntoView({ behavior: "smooth", block: "start" });
+      return fail("ご希望のメニューを1つ以上選択してください。");
+    }
 
     var required = $$("[required]", form);
     for (var i = 0; i < required.length; i++) {
@@ -189,8 +218,10 @@
       wish1: dates[0], wish2: dates[1], wish3: dates[2],
       parking: form.parking.value, payment: form.payment.value, visit: form.visit.value, pet: form.pet.value,
       units: est.units,
-      items: est.items.map(function (i) { return i.name + " × " + i.qty + "台 = " + yen(i.subtotal); }).join("\n"),
+      items: est.items.map(function (i) { return lineLabel(i) + " = " + lineAmount(i); }).join("\n"),
       total: est.total,
+      totalNote: est.items.some(function (i) { return i.from; }) ? "〜（最低料金で計算）" : "",
+      categories: Array.from(new Set(est.items.map(function (i) { return i.cat; }))).join("・"),
       aircon: unitsInfo,
       notes: form.notes.value,
       company: form.company.value // スパム対策（空のはず）
