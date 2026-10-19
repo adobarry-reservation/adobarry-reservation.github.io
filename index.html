@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>エアコンクリーニング ご予約 | アドバリー</title>
-<meta name="description" content="アドバリーのエアコンクリーニング。料金をその場で確認して、そのままご予約いただけます。">
+<title>クリーニング ご予約 | アドバリー</title>
+<meta name="description" content="アドバリーのエアコン・浴室・洗濯機・ハウスクリーニング。料金をその場で確認して、そのままご予約いただけます。">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -16,57 +16,97 @@
 </header>
 
 <main class="wrap">
-  <h1>エアコンクリーニング ご予約</h1>
-  <p class="lead">台数とオプションを選ぶと料金がその場でわかります。そのままご予約までお進みください。</p>
+  <h1>クリーニング ご予約</h1>
+  <p class="lead">メニューと数量を選ぶと料金がその場でわかります。そのままご予約までお進みください。</p>
 
   <form id="reserveForm" novalidate>
-    <!-- ① 台数 -->
-    <section class="card">
+    <!-- メニュー切替タブ -->
+    <div class="tabs" role="tablist" aria-label="クリーニングメニュー">
+      <button type="button" role="tab" class="tab" data-tab="aircon" aria-selected="true"><i>❄️</i>エアコン<span class="tab-count"></span></button>
+      <button type="button" role="tab" class="tab" data-tab="bath" aria-selected="false"><i>🛁</i>浴室<span class="tab-count"></span></button>
+      <button type="button" role="tab" class="tab" data-tab="washer" aria-selected="false"><i>🧺</i>洗濯機<span class="tab-count"></span></button>
+      <button type="button" role="tab" class="tab" data-tab="house" aria-selected="false"><i>🏠</i>ハウス<span class="tab-count"></span></button>
+    </div>
+    <p class="tabs-note">複数のメニューを組み合わせてご予約いただけます。合計金額はすべてのメニューの合算です。</p>
+
+    <!-- エアコン -->
+    <div class="panel" data-panel="aircon" data-cat="エアコン" role="tabpanel">
+      <section class="card">
       <h2><span class="num">1</span>エアコンの台数</h2>
       <div class="grid">
-        <label class="row">
-          <span class="row-name">通常タイプ<small>7,500円／台</small></span>
-          <select name="normal" data-price="7500" class="qty"></select>
-        </label>
-        <label class="row">
-          <span class="row-name">お掃除機能付きタイプ<small>14,000円／台</small></span>
-          <select name="cleaning" data-price="14000" class="qty"></select>
-        </label>
+        <label class="row"><span class="row-name">通常タイプ<small>7,500円／台</small></span><select name="normal" class="qty" data-name="通常タイプ" data-price="7500" data-unit="台" data-max="10"></select></label>
+        <label class="row"><span class="row-name">お掃除機能付きタイプ<small>14,000円／台</small></span><select name="cleaning" class="qty" data-name="お掃除機能付きタイプ" data-price="14000" data-unit="台" data-max="10"></select></label>
       </div>
       <p class="note">※通常タイプとお掃除機能付きタイプをそれぞれ選択してください。</p>
-    </section>
-
-    <!-- ② セット -->
-    <section class="card">
+      </section>
+      <section class="card">
       <h2><span class="num">2</span>人気セット</h2>
       <div class="grid">
-        <label class="row">
-          <span class="row-name"><em class="badge">No.1</em>室外機＋防カビ抗菌<small>＋5,000円／台</small></span>
-          <select name="set1" data-price="5000" class="qty opt"></select>
-        </label>
-        <label class="row">
-          <span class="row-name"><em class="badge">No.2</em>室外機＋防カビ抗菌＋ドレンホース<small>＋7,000円／台</small></span>
-          <select name="set2" data-price="7000" class="qty opt"></select>
-        </label>
+        <label class="row"><span class="row-name"><em class="badge">No.1</em>室外機＋防カビ抗菌<small>＋5,000円／台</small></span><select name="set1" class="qty opt" data-name="室外機＋防カビ抗菌" data-price="5000" data-unit="台" data-max="10"></select></label>
+        <label class="row"><span class="row-name"><em class="badge">No.2</em>室外機＋防カビ抗菌＋ドレンホース<small>＋7,000円／台</small></span><select name="set2" class="qty opt" data-name="室外機＋防カビ抗菌＋ドレンホース" data-price="7000" data-unit="台" data-max="10"></select></label>
       </div>
-    </section>
-
-    <!-- ③ オプション -->
-    <section class="card">
+      </section>
+      <section class="card">
       <h2><span class="num">3</span>その他オプション</h2>
       <div class="grid">
-        <label class="row"><span class="row-name">室外機<small>＋5,000円／台</small></span><select name="outdoor" data-price="5000" class="qty opt"></select></label>
-        <label class="row"><span class="row-name">ドレンホース<small>＋2,500円／台</small></span><select name="drain" data-price="2500" class="qty opt"></select></label>
-        <label class="row"><span class="row-name">防カビ抗菌<small>＋3,000円／台</small></span><select name="antimold" data-price="3000" class="qty opt"></select></label>
-        <label class="row"><span class="row-name">防虫キャップ<small>＋1,000円／台</small></span><select name="cap" data-price="1000" class="qty opt"></select></label>
+        <label class="row"><span class="row-name">室外機<small>＋5,000円／台</small></span><select name="outdoor" class="qty opt" data-name="室外機" data-price="5000" data-unit="台" data-max="10"></select></label>
+        <label class="row"><span class="row-name">ドレンホース<small>＋2,500円／台</small></span><select name="drain" class="qty opt" data-name="ドレンホース" data-price="2500" data-unit="台" data-max="10"></select></label>
+        <label class="row"><span class="row-name">防カビ抗菌<small>＋3,000円／台</small></span><select name="antimold" class="qty opt" data-name="防カビ抗菌" data-price="3000" data-unit="台" data-max="10"></select></label>
+        <label class="row"><span class="row-name">防虫キャップ<small>＋1,000円／台</small></span><select name="cap" class="qty opt" data-name="防虫キャップ" data-price="1000" data-unit="台" data-max="10"></select></label>
       </div>
       <p class="note">※各セット・オプションは施工する台数を個別に選択できます。</p>
       <p class="warn" id="optWarn" hidden></p>
-    </section>
+      </section>
+    </div>
+
+    <!-- 浴室 -->
+    <div class="panel" data-panel="bath" data-cat="浴室" role="tabpanel" hidden>
+      <section class="card">
+      <h2>浴室クリーニング</h2>
+      <div class="grid">
+        <label class="row"><span class="row-name">風呂釜洗浄<small>18,000円</small></span><select name="bath_kama" class="qty" data-name="風呂釜洗浄" data-price="18000" data-unit="箇所" data-max="2"></select></label>
+        <label class="row"><span class="row-name">浴槽裏洗浄<small>5,000円</small></span><select name="bath_ura" class="qty" data-name="浴槽裏洗浄" data-price="5000" data-unit="箇所" data-max="2"></select></label>
+        <label class="row"><span class="row-name">浴室クリーニング<small>16,800円〜</small></span><select name="bath_room" class="qty" data-name="浴室クリーニング" data-price="16800" data-unit="箇所" data-max="2" data-from></select></label>
+        <label class="row"><span class="row-name">浴室多機能換気扇<small>10,000円〜</small></span><select name="bath_fan_multi" class="qty" data-name="浴室多機能換気扇" data-price="10000" data-unit="台" data-max="2" data-from></select></label>
+        <label class="row"><span class="row-name">浴室換気扇<small>5,000円〜</small></span><select name="bath_fan" class="qty" data-name="浴室換気扇" data-price="5000" data-unit="台" data-max="2" data-from></select></label>
+      </div>
+      <p class="note">※「〜」表記のメニューは表示金額を最低料金として概算計算します。</p>
+      </section>
+    </div>
+
+    <!-- 洗濯機 -->
+    <div class="panel" data-panel="washer" data-cat="洗濯機" role="tabpanel" hidden>
+      <section class="card">
+      <h2>洗濯機クリーニング</h2>
+      <div class="grid">
+        <label class="row"><span class="row-name">縦型洗濯機<small>15,000円／台</small></span><select name="wash_tate" class="qty" data-name="縦型洗濯機" data-price="15000" data-unit="台" data-max="3"></select></label>
+        <label class="row"><span class="row-name">ビートウォッシュ<small>20,000円／台</small></span><select name="wash_beat" class="qty" data-name="ビートウォッシュ" data-price="20000" data-unit="台" data-max="3"></select></label>
+        <label class="row"><span class="row-name">ドラム式洗濯機<small>28,000円／台</small></span><select name="wash_drum" class="qty" data-name="ドラム式洗濯機" data-price="28000" data-unit="台" data-max="3"></select></label>
+      </div>
+      </section>
+    </div>
+
+    <!-- ハウス -->
+    <div class="panel" data-panel="house" data-cat="ハウス" role="tabpanel" hidden>
+      <section class="card">
+      <h2>ハウスクリーニング</h2>
+      <div class="grid">
+        <label class="row"><span class="row-name">レンジフード<small>13,800円〜</small></span><select name="h_hood" class="qty" data-name="レンジフード" data-price="13800" data-unit="箇所" data-max="2" data-from></select></label>
+        <label class="row"><span class="row-name">キッチン<small>16,800円〜</small></span><select name="h_kitchen" class="qty" data-name="キッチン" data-price="16800" data-unit="箇所" data-max="2" data-from></select></label>
+        <label class="row"><span class="row-name">トイレ<small>8,000円</small></span><select name="h_toilet" class="qty" data-name="トイレ" data-price="8000" data-unit="箇所" data-max="3"></select></label>
+        <label class="row"><span class="row-name">洗面台<small>8,000円</small></span><select name="h_sink" class="qty" data-name="洗面台" data-price="8000" data-unit="箇所" data-max="3"></select></label>
+        <label class="row"><span class="row-name">窓<small>3,000円〜／枚</small></span><select name="h_window" class="qty" data-name="窓" data-price="3000" data-unit="枚" data-max="10" data-from></select></label>
+        <label class="row"><span class="row-name">ベランダ<small>8,000円〜</small></span><select name="h_veranda" class="qty" data-name="ベランダ" data-price="8000" data-unit="箇所" data-max="2" data-from></select></label>
+        <label class="row"><span class="row-name">玄関<small>8,000円〜</small></span><select name="h_entrance" class="qty" data-name="玄関" data-price="8000" data-unit="箇所" data-max="2" data-from></select></label>
+        <label class="row"><span class="row-name">床<small>お見積もり</small></span><select name="h_floor" class="qty quote" data-name="床" data-price="0" data-unit="" data-max="1"></select></label>
+      </div>
+      <p class="note">※「〜」表記のメニューは表示金額を最低料金として概算計算します。床は別途お見積もりです。</p>
+      </section>
+    </div>
 
     <!-- ④ 予約情報 -->
     <section class="card" id="booking">
-      <h2><span class="num">4</span>ご予約情報</h2>
+      <h2><span class="num">✓</span>ご予約情報</h2>
 
       <div class="field">
         <label for="name">お名前<b class="req">必須</b></label>
@@ -120,8 +160,8 @@
 
       <div class="field">
         <label>エアコン情報<span class="opt-label">任意</span></label>
-        <small class="hint">選択した台数分、設置場所・メーカーなどをご入力いただけます。</small>
-        <div id="unitList" class="unit-list"><p class="empty">① で台数を選ぶと入力欄が表示されます。</p></div>
+        <small class="hint">エアコンを選択した場合、台数分の設置場所・メーカーなどをご入力いただけます。</small>
+        <div id="unitList" class="unit-list"><p class="empty">エアコンの台数を選ぶと入力欄が表示されます。</p></div>
       </div>
 
       <div class="field three">
@@ -141,7 +181,7 @@
 
       <div class="field">
         <label for="notes">備考・ご要望</label>
-        <textarea id="notes" name="notes" rows="4" placeholder="エアコンの設置状況など、ご要望がございましたらご記入ください"></textarea>
+        <textarea id="notes" name="notes" rows="4" placeholder="設置状況・汚れの程度など、ご要望がございましたらご記入ください"></textarea>
       </div>
 
       <!-- スパム対策（人には見えない） -->
