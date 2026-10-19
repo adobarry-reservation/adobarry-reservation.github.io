@@ -249,8 +249,13 @@
       categories: Array.from(new Set(est.items.map(function (i) { return i.cat; }))).join("・"),
       aircon: unitsInfo,
       notes: form.notes.value,
+      referral: form.referral ? form.referral.value.trim() : "",
+      date1: form.date1.value, date2: form.date2.value, date3: form.date3.value,
+      time1: form.time1.value, time2: form.time2.value, time3: form.time3.value,
       company: form.company.value // スパム対策（空のはず）
     };
+    // メニューごとの数量（スプレッドシートの各列に入る）
+    getItems().forEach(function (i) { payload["q_" + i.key] = i.qty; });
 
     var btn = $("#submitBtn");
     btn.disabled = true; btn.textContent = "送信中…";
