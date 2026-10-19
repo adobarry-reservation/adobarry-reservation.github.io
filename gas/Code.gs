@@ -21,7 +21,7 @@ const HEADERS = [
   "第1希望日", "第2希望日", "時間帯", "支払方法", "備考",
   "紹介コード", "紹介料(20%)", "支払い状況", "作業確定日", "PayPal請求書ID", "PayPal状態", "メモ",
   "3点セット台数", "防カビコート台数", "室外機台数", "ドレン台数",
-  "住居タイプ", "住居タイプ根拠", "重複チェック", "同期状況（スケジュール表）", "紹介の判定", "紹介料お知らせ日",
+  "住居タイプ", "住居タイプ根拠", "重複チェック", "同期状況（スケジュール表）", "紹介の判定", "紹介料お知らせ日", "紹介料締め日",
   // ↓ 予約フォームのメニューに合わせて追加した列
   "2点セット台数", "防虫キャップ台数",
   "風呂釜洗浄", "浴槽裏洗浄", "浴室クリーニング", "浴室多機能換気扇", "浴室換気扇",
@@ -29,6 +29,9 @@ const HEADERS = [
   "レンジフード", "キッチン", "トイレ", "洗面台", "床（見積もり希望）",
   "第3希望日", "メニュー", "内訳", "エアコン情報", "駐車スペース", "当店のご利用", "ペット"
 ];
+
+// スタッフが手入力する列（黄色）
+const MANUAL_COLUMNS = ["支払い状況", "作業確定日", "PayPal請求書ID", "PayPal状態", "メモ", "同期状況（スケジュール表）", "紹介料お知らせ日", "紹介料締め日"];
 
 // フォームの項目名 → 列名（数量の列）
 const QTY_COLUMNS = {
@@ -40,6 +43,21 @@ const QTY_COLUMNS = {
   wash_tate: "縦型洗濯機", wash_beat: "ビートウォッシュ", wash_drum: "ドラム式洗濯機",
   h_hood: "レンジフード", h_kitchen: "キッチン", h_toilet: "トイレ", h_sink: "洗面台", h_floor: "床（見積もり希望）"
 };
+
+// 既存の「予約」シートに足りない列を追加する（データはそのまま残る）
+function addMissingColumns() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  if (!sheet) return;
+  HEADERS.forEach((h, i) => {
+    const current = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    if (current[i] === h) return;
+    if (current.indexOf(h) === -1) {
+      sheet.insertColumnBefore(i + 1);
+      sheet.getRange(1, i + 1).setValue(h).setFontWeight("bold")
+        .setBackground(MANUAL_COLUMNS.includes(h) ? "#fff4d6" : "#eaf6ec");
+    }
+  });
+}
 
 // 最初に一度だけ実行：シートの見出しを作り、権限を許可する
 function setup() {
@@ -178,8 +196,10 @@ function getSheet_() {
   let sheet = ss.getSheetByName(SHEET_NAME);
   if (sheet) {
     const current = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), 1)).getValues()[0];
-    if (current.join("|") !== HEADERS.join("|")) {
-      // 古い形式のシートは残して名前を変える
+    if (current.join("|") !== HEADERS.join("|")) addMissingColumns();
+    const after = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), 1)).getValues()[0];
+    if (after.slice(0, HEADERS.length).join("|") !== HEADERS.join("|")) {
+      // 列を足しても合わない古い形式のシートは残して名前を変える
       sheet.setName(SHEET_NAME + "_旧_" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyyMMddHHmm"));
       sheet = null;
     }
@@ -191,8 +211,7 @@ function getSheet_() {
     sheet.setFrozenRows(1);
     sheet.setFrozenColumns(3);
     // スタッフ手入力欄は色分け
-    ["支払い状況", "作業確定日", "PayPal請求書ID", "PayPal状態", "メモ", "同期状況（スケジュール表）", "紹介料お知らせ日"]
-      .forEach((h) => sheet.getRange(1, HEADERS.indexOf(h) + 1).setBackground("#fff4d6"));
+    MANUAL_COLUMNS.forEach((h) => sheet.getRange(1, HEADERS.indexOf(h) + 1).setBackground("#fff4d6"));
     sheet.getRange(2, HEADERS.indexOf("支払い状況") + 1, 999, 1).setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(["未払い", "支払い済み", "キャンセル"], true).build());
   }
