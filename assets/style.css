@@ -77,3 +77,5 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--green);outline-o
 .tab-count{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#ff7043;color:#fff;font-size:12px;line-height:20px}
 .tabs-note{font-size:13px;color:var(--muted);text-align:center;margin:0 0 16px}
 .line-items li span:last-child{white-space:nowrap}
+.hero{margin:0 0 20px}
+.hero img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
