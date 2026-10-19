@@ -144,6 +144,15 @@
         <small class="hint">時間は作業スタッフの到着時間です。</small>
       </fieldset>
 
+      <fieldset class="field housing">
+        <legend>お住まいのタイプ<b class="req">必須</b></legend>
+        <div class="choice">
+          <label><input type="radio" name="housing" value="戸建て" required><span>戸建て</span></label>
+          <label><input type="radio" name="housing" value="マンション・アパート" required><span>マンション・アパート</span></label>
+          <label><input type="radio" name="housing" value="その他（店舗・事務所など）" required><span>その他（店舗・事務所など）</span></label>
+        </div>
+      </fieldset>
+
       <div class="field">
         <label for="parking">駐車スペース<b class="req">必須</b></label>
         <select id="parking" name="parking" required>
