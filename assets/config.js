@@ -5,7 +5,7 @@ window.ADOBARRY_CONFIG = {
   ENDPOINT: "https://script.google.com/macros/s/AKfycbyFqIARIvQHy1d6SlHr-whyYykNJM12X9qkPU1aP_h34sEf6LsX5Riz9__A2l7-8XfbqA/exec",
 
   // 予約完了画面に出す LINE 公式アカウントのURL（例: https://lin.ee/xxxxxxx）
-  LINE_URL: "",
+  LINE_URL: "https://lin.ee/OpVJBWG",
 
   // 予約可能な最短日（今日から何日後か）
   MIN_DAYS_AHEAD: 2,
