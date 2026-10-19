@@ -223,7 +223,7 @@
   var LABELS = {
     name: "お名前", zip: "郵便番号", address: "住所", tel: "電話番号", email: "メールアドレス",
     date1: "第一希望の日付", time1: "第一希望の時間", date2: "第二希望の日付", time2: "第二希望の時間",
-    date3: "第三希望の日付", time3: "第三希望の時間", housing: "お住まいのタイプ", parking: "駐車スペース", agree: "金額についての同意"
+    date3: "第三希望の日付", time3: "第三希望の時間", housing: "お住まいのタイプ", parking: "駐車スペース", payment: "お支払い方法", agree: "金額についての同意"
   };
 
   function clearInvalid(e) {
