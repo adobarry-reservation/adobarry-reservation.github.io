@@ -20,6 +20,12 @@ const COLUMNS = [
   ["visit", "利用"], ["pet", "ペット"], ["notes", "備考"]
 ];
 
+// 最初に一度だけ実行：シートの見出しを作り、権限を許可する
+function setup() {
+  getSheet_();
+  MailApp.getRemainingDailyQuota();
+}
+
 function doPost(e) {
   const p = (e && e.parameter) || {};
   if (p.company) return ok_(); // スパム（隠し項目に入力あり）は無視
