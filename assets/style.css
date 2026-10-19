@@ -79,3 +79,4 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--green);outline-o
 .line-items li span:last-child{white-space:nowrap}
 .hero{margin:0 0 20px}
 .hero img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.agree.invalid{outline:2px solid var(--err);background:#fff6f6}

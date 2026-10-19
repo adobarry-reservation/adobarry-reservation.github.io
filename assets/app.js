@@ -180,10 +180,30 @@
   function fail(msg, el) {
     var st = $("#sendStatus");
     st.textContent = msg; st.className = "status err";
-    if (el) { el.classList.add("invalid"); el.focus(); el.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    if (el) { el.classList.add("invalid"); scrollToEl(el); }
   }
 
-  form.addEventListener("input", function (e) { e.target.classList && e.target.classList.remove("invalid"); });
+  // iPhoneでも確実に該当箇所までスクロールする
+  function scrollToEl(el) {
+    var y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+  }
+
+  var LABELS = {
+    name: "お名前", zip: "郵便番号", address: "住所", tel: "電話番号", email: "メールアドレス",
+    date1: "第一希望の日付", time1: "第一希望の時間", date2: "第二希望の日付", time2: "第二希望の時間",
+    date3: "第三希望の日付", time3: "第三希望の時間", parking: "駐車スペース", agree: "金額についての同意"
+  };
+
+  function clearInvalid(e) {
+    var t = e.target;
+    if (t.classList && t.classList.contains("invalid")) {
+      var ok = t.type === "checkbox" ? t.checked : String(t.value).trim();
+      if (ok) t.classList.remove("invalid");
+    }
+  }
+  form.addEventListener("input", clearInvalid);
+  form.addEventListener("change", clearInvalid);
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -193,12 +213,17 @@
       return fail("ご希望のメニューを1つ以上選択してください。");
     }
 
-    var required = $$("[required]", form);
-    for (var i = 0; i < required.length; i++) {
-      var f = required[i];
-      if (f.type === "checkbox" ? !f.checked : !f.value.trim()) {
-        return fail("未入力の必須項目があります。", f);
-      }
+    var missing = $$("[required]", form).filter(function (f) {
+      var empty = f.type === "checkbox" ? !f.checked : !String(f.value).trim();
+      f.classList.toggle("invalid", empty);
+      if (f.type === "checkbox") f.closest(".agree").classList.toggle("invalid", empty);
+      return empty;
+    });
+    if (missing.length) {
+      var names = missing.map(function (f) { return LABELS[f.name] || f.name; });
+      fail("未入力の項目があります：" + names.join("、"));
+      scrollToEl(missing[0].type === "checkbox" ? missing[0].closest(".agree") : missing[0]);
+      return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value)) return fail("メールアドレスの形式をご確認ください。", form.email);
     if (form.tel.value.replace(/[^0-9]/g, "").length < 10) return fail("電話番号をご確認ください。", form.tel);
