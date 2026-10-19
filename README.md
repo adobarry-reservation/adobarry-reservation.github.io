@@ -52,5 +52,5 @@ https://<ユーザー名>.github.io/adobarry-reservation/?normal=2&cleaning=1&se
 - エアコン：`normal` `cleaning` `set1` `set2` `outdoor` `drain` `antimold` `cap`
 - 浴室：`bath_kama` `bath_ura` `bath_room` `bath_fan_multi` `bath_fan`
 - 洗濯機：`wash_tate` `wash_beat` `wash_drum`
-- ハウス：`h_hood` `h_kitchen` `h_toilet` `h_sink` `h_window` `h_veranda` `h_entrance` `h_floor`
+- ハウス：`h_hood` `h_kitchen` `h_toilet` `h_sink` `h_floor`
 - 最初に開くタブ：`tab=aircon` / `bath` / `washer` / `house`（例：`?tab=bath&bath_kama=1`）
