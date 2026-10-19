@@ -80,3 +80,11 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--green);outline-o
 .hero{margin:0 0 20px}
 .hero img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
 .agree.invalid{outline:2px solid var(--err);background:#fff6f6}
+.choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.choice label{display:block;cursor:pointer;position:relative}
+.choice input{position:absolute;opacity:0;width:1px;height:1px}
+.choice span{display:flex;align-items:center;justify-content:center;text-align:center;min-height:52px;padding:8px;border:1px solid #c9d1cb;border-radius:10px;background:#fff;font-size:14px;font-weight:600;line-height:1.4}
+.choice input:checked+span{background:var(--green);border-color:var(--green);color:#fff}
+.choice input:focus-visible+span{outline:2px solid var(--green);outline-offset:2px}
+fieldset.invalid .choice span{border-color:var(--err);background:#fff6f6}
+@media(max-width:480px){.choice{grid-template-columns:1fr}}

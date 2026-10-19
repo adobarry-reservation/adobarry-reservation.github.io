@@ -192,11 +192,12 @@
   var LABELS = {
     name: "お名前", zip: "郵便番号", address: "住所", tel: "電話番号", email: "メールアドレス",
     date1: "第一希望の日付", time1: "第一希望の時間", date2: "第二希望の日付", time2: "第二希望の時間",
-    date3: "第三希望の日付", time3: "第三希望の時間", parking: "駐車スペース", agree: "金額についての同意"
+    date3: "第三希望の日付", time3: "第三希望の時間", housing: "お住まいのタイプ", parking: "駐車スペース", agree: "金額についての同意"
   };
 
   function clearInvalid(e) {
     var t = e.target;
+    if (t.type === "radio" && t.checked) { var fs = t.closest("fieldset"); if (fs) fs.classList.remove("invalid"); return; }
     if (t.classList && t.classList.contains("invalid")) {
       var ok = t.type === "checkbox" ? t.checked : String(t.value).trim();
       if (ok) t.classList.remove("invalid");
@@ -213,7 +214,15 @@
       return fail("ご希望のメニューを1つ以上選択してください。");
     }
 
+    var seenRadio = {};
     var missing = $$("[required]", form).filter(function (f) {
+      if (f.type === "radio") {
+        if (seenRadio[f.name]) return false;
+        seenRadio[f.name] = true;
+        var picked = !!form.querySelector('input[name="' + f.name + '"]:checked');
+        f.closest("fieldset").classList.toggle("invalid", !picked);
+        return !picked;
+      }
       var empty = f.type === "checkbox" ? !f.checked : !String(f.value).trim();
       f.classList.toggle("invalid", empty);
       if (f.type === "checkbox") f.closest(".agree").classList.toggle("invalid", empty);
@@ -222,7 +231,8 @@
     if (missing.length) {
       var names = missing.map(function (f) { return LABELS[f.name] || f.name; });
       fail("未入力の項目があります：" + names.join("、"));
-      scrollToEl(missing[0].type === "checkbox" ? missing[0].closest(".agree") : missing[0]);
+      var first = missing[0];
+      scrollToEl(first.type === "checkbox" ? first.closest(".agree") : first.type === "radio" ? first.closest("fieldset") : first);
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value)) return fail("メールアドレスの形式をご確認ください。", form.email);
@@ -250,6 +260,7 @@
       aircon: unitsInfo,
       notes: form.notes.value,
       referral: form.referral ? form.referral.value.trim() : "",
+      housing: (form.querySelector('input[name="housing"]:checked') || {}).value || "",
       date1: form.date1.value, date2: form.date2.value, date3: form.date3.value,
       time1: form.time1.value, time2: form.time2.value, time3: form.time3.value,
       company: form.company.value // スパム対策（空のはず）
