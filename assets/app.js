@@ -86,15 +86,27 @@
   function render() {
     limitOptions();
     var items = getItems();
-    var total = items.reduce(function (s, i) { return s + i.subtotal; }, 0);
+    var regular = items.reduce(function (s, i) { return s + i.subtotal; }, 0);
     var picked = items.filter(function (i) { return i.qty > 0; });
     var hasFrom = picked.some(function (i) { return i.from; });
+    var camp = campaignOn() ? CAMP : null;
+    var discount = camp ? Math.round(regular * camp.RATE) : 0;
+    var total = regular - discount;
     var totalText = yen(total) + (hasFrom ? "〜" : "");
     $("#total").textContent = totalText;
+    var save = $("#saving");
+    save.hidden = !discount;
+    save.textContent = discount ? "通常より" + yen(discount) + "お得！" : "";
     $("#lineItems").innerHTML = picked.length
       ? picked.map(function (i) {
           return "<li><span>" + lineLabel(i) + "</span><span>" + lineAmount(i) + "</span></li>";
-        }).join("") + '<li class="sum"><span>合計（税込・概算）</span><span>' + totalText + "</span></li>"
+        }).join("") +
+        (discount
+          ? '<li class="regular"><span>通常価格</span><span>' + yen(regular) + (hasFrom ? "〜" : "") + "</span></li>" +
+            '<li class="discount"><span>' + camp.LABEL + "</span><span>−" + yen(discount) + "</span></li>"
+          : "") +
+        '<li class="sum"><span>合計（税込・概算）</span><span>' + totalText + "</span></li>" +
+        (discount ? '<li class="discount"><span>通常より' + yen(discount) + "お得！</span><span></span></li>" : "")
       : '<li class="empty">まだ何も選択されていません</li>';
 
     // タブに選択数を表示
@@ -105,8 +117,42 @@
 
     var u = units();
     renderUnits(u);
-    return { items: picked, total: total, units: u };
+    renderCampaignHint();
+    return { items: picked, total: total, regular: regular, discount: discount, units: u };
   }
+
+  // ---------- 日付限定割引 ----------
+  var CAMP = C.CAMPAIGN && C.CAMPAIGN.DATE ? C.CAMPAIGN : null;
+  function campDateText() {
+    var d = CAMP.DATE.split("-");
+    var w = "日月火水木金土".charAt(new Date(+d[0], d[1] - 1, +d[2]).getDay());
+    return (+d[1]) + "月" + (+d[2]) + "日（" + w + "）";
+  }
+  function campaignOn() { return !!CAMP && form.date1.value === CAMP.DATE; }
+  function renderCampaignHint() {
+    var hint = $("#campaignHint");
+    if (!CAMP) { hint.hidden = true; return; }
+    var pct = Math.round(CAMP.RATE * 100) + "%OFF";
+    if (campaignOn()) {
+      hint.hidden = false; hint.textContent = "🎉 第一希望が" + campDateText() + "のため、" + pct + "が適用されています。";
+    } else if (form.date2.value === CAMP.DATE || form.date3.value === CAMP.DATE) {
+      hint.hidden = false; hint.textContent = campDateText() + "を【第一希望】にすると" + pct + "になります。";
+    } else {
+      hint.hidden = true;
+    }
+  }
+  (function () {
+    if (!CAMP) return;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var d = CAMP.DATE.split("-"), cd = new Date(+d[0], d[1] - 1, +d[2]);
+    if (cd < today) { CAMP = null; return; } // 終了した割引は表示しない
+    var b = $("#campaignBanner");
+    b.hidden = false;
+    b.textContent = "🎉 " + campDateText() + "のご予約は全メニュー" + Math.round(CAMP.RATE * 100) + "%OFF！（第一希望日に選択）";
+  })();
+  $$('input[type="date"]').forEach(function (d) {
+    d.addEventListener("change", render);
+  });
 
   // ---------- エアコン情報（台数分の入力欄） ----------
   var unitCache = {};
@@ -161,11 +207,14 @@
     var panel = sel.closest(".panel");
     var cat = panel ? "【" + panel.dataset.cat + "】" : "";
     var what = sel.classList.contains("quote")
-      ? (q ? "床：見積もり希望" : "床：なし")
+      ? (q ? sel.dataset.name + "：見積もり希望" : sel.dataset.name + "：なし")
       : sel.dataset.name + "：" + (q ? q + unit : "なし");
     $(".pop-item", pop).textContent = cat + what;
     var hasFrom = est.items.some(function (i) { return i.from; });
     $(".pop-total", pop).textContent = yen(est.total) + (hasFrom ? "〜" : "");
+    var ps = $(".pop-save", pop);
+    ps.hidden = !est.discount;
+    ps.textContent = est.discount ? "通常より" + yen(est.discount) + "お得！" : "";
     $(".pop-count", pop).textContent = est.items.length ? "選択中 " + est.items.length + "項目" : "まだ何も選択されていません";
     pop.classList.remove("show");
     void pop.offsetWidth; // アニメーションをやり直す
@@ -284,8 +333,11 @@
       wish1: dates[0], wish2: dates[1], wish3: dates[2],
       parking: form.parking.value, payment: form.payment.value, visit: form.visit.value, pet: form.pet.value,
       units: est.units,
-      items: est.items.map(function (i) { return lineLabel(i) + " = " + lineAmount(i); }).join("\n"),
+      items: est.items.map(function (i) { return lineLabel(i) + " = " + lineAmount(i); }).join("\n") +
+        (est.discount ? "\n" + CAMP.LABEL + " = −" + yen(est.discount) : ""),
       total: est.total,
+      regularTotal: est.regular,
+      discount: est.discount,
       totalNote: est.items.some(function (i) { return i.from; }) ? "〜（最低料金で計算）" : "",
       categories: Array.from(new Set(est.items.map(function (i) { return i.cat; }))).join("・"),
       aircon: unitsInfo,

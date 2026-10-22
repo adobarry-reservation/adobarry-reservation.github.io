@@ -131,7 +131,7 @@ function buildRow_(p, sheet) {
   v["住所"] = p.address;
   v["3点セット"] = num("set2") > 0 ? "あり" : "なし";
   v["合計(税込)"] = total;
-  v["通常価格合計"] = total;
+  v["通常価格合計"] = Number(p.regularTotal || total); // 割引前の金額
   v["第1希望日"] = p.date1;
   v["第2希望日"] = p.date2;
   v["第3希望日"] = p.date3;

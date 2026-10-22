@@ -14,5 +14,8 @@ window.ADOBARRY_CONFIG = {
   TIME_SLOTS: ["8〜9時", "12〜14時", "15〜18時"],
 
   // 1種類あたりの最大台数
-  MAX_QTY: 10
+  MAX_QTY: 10,
+
+  // 日付限定の割引（第一希望日がこの日なら合計から割引）。やめる時は CAMPAIGN: null にする
+  CAMPAIGN: { DATE: "2026-11-15", RATE: 0.10, LABEL: "11月15日限定 10%OFF" }
 };
