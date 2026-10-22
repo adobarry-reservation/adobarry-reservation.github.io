@@ -16,6 +16,7 @@ window.ADOBARRY_CONFIG = {
   // 1種類あたりの最大台数
   MAX_QTY: 10,
 
-  // 日付限定の割引（第一希望日がこの日なら合計から割引）。やめる時は CAMPAIGN: null にする
-  CAMPAIGN: { DATE: "2026-11-15", RATE: 0.10, LABEL: "11月15日限定 10%OFF" }
+  // 期間限定の割引（UNTIL の日の23:59までにこのフォームから申し込むと合計から割引）
+  // やめる時は CAMPAIGN: null にする
+  CAMPAIGN: { UNTIL: "2026-11-15", RATE: 0.10, LABEL: "Web予約限定 10%OFF" }
 };

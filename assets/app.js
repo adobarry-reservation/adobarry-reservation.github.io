@@ -117,42 +117,23 @@
 
     var u = units();
     renderUnits(u);
-    renderCampaignHint();
     return { items: picked, total: total, regular: regular, discount: discount, units: u };
   }
 
-  // ---------- 日付限定割引 ----------
-  var CAMP = C.CAMPAIGN && C.CAMPAIGN.DATE ? C.CAMPAIGN : null;
-  function campDateText() {
-    var d = CAMP.DATE.split("-");
-    var w = "日月火水木金土".charAt(new Date(+d[0], d[1] - 1, +d[2]).getDay());
-    return (+d[1]) + "月" + (+d[2]) + "日（" + w + "）";
+  // ---------- 期間限定割引（UNTIL の日までの申し込みで割引） ----------
+  var CAMP = C.CAMPAIGN && C.CAMPAIGN.UNTIL ? C.CAMPAIGN : null;
+  function todayJST() { // お客様の端末の時刻設定に関係なく日本時間で判定
+    return new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
   }
-  function campaignOn() { return !!CAMP && form.date1.value === CAMP.DATE; }
-  function renderCampaignHint() {
-    var hint = $("#campaignHint");
-    if (!CAMP) { hint.hidden = true; return; }
-    var pct = Math.round(CAMP.RATE * 100) + "%OFF";
-    if (campaignOn()) {
-      hint.hidden = false; hint.textContent = "🎉 第一希望が" + campDateText() + "のため、" + pct + "が適用されています。";
-    } else if (form.date2.value === CAMP.DATE || form.date3.value === CAMP.DATE) {
-      hint.hidden = false; hint.textContent = campDateText() + "を【第一希望】にすると" + pct + "になります。";
-    } else {
-      hint.hidden = true;
-    }
-  }
+  function campaignOn() { return !!CAMP && todayJST() <= CAMP.UNTIL; }
   (function () {
-    if (!CAMP) return;
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    var d = CAMP.DATE.split("-"), cd = new Date(+d[0], d[1] - 1, +d[2]);
-    if (cd < today) { CAMP = null; return; } // 終了した割引は表示しない
+    if (!campaignOn()) return;
+    var d = CAMP.UNTIL.split("-");
+    var w = "日月火水木金土".charAt(new Date(+d[0], d[1] - 1, +d[2]).getDay());
     var b = $("#campaignBanner");
     b.hidden = false;
-    b.textContent = "🎉 " + campDateText() + "のご予約は全メニュー" + Math.round(CAMP.RATE * 100) + "%OFF！（第一希望日に選択）";
+    b.textContent = "🎉 " + (+d[1]) + "月" + (+d[2]) + "日（" + w + "）までにこのフォームからお申し込みで、全メニュー" + Math.round(CAMP.RATE * 100) + "%OFF！";
   })();
-  $$('input[type="date"]').forEach(function (d) {
-    d.addEventListener("change", render);
-  });
 
   // ---------- エアコン情報（台数分の入力欄） ----------
   var unitCache = {};
