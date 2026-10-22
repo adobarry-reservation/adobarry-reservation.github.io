@@ -16,7 +16,7 @@ gas/Code.gs         … 受付処理（Google Apps Script に貼る）
 1. このフォルダの中身を GitHub リポジトリにアップロード（例：`adobarry-reservation`）
 2. リポジトリの **Settings → Pages** を開く
 3. Source を **Deploy from a branch**、Branch を `main` / `/(root)` にして保存
-4. 数分後、`https://<ユーザー名>.github.io/adobarry-reservation/` で表示されます
+4. 数分後、`https://adobarry-reservation.github.io/` で表示されます
 
 ## 2. 送信先（Googleスプレッドシート）を用意する
 
@@ -45,7 +45,7 @@ gas/Code.gs         … 受付処理（Google Apps Script に貼る）
 見積もり内容を引き継いでリンクできます。
 
 ```
-https://<ユーザー名>.github.io/adobarry-reservation/?normal=2&cleaning=1&set1=1
+https://adobarry-reservation.github.io/?normal=2&cleaning=1&set1=1
 ```
 
 使えるキー：
