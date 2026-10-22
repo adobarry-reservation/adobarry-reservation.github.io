@@ -126,13 +126,16 @@
     return new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
   }
   function campaignOn() { return !!CAMP && todayJST() <= CAMP.UNTIL; }
-  (function () {
-    if (!campaignOn()) return;
+  function campUntilText() {
     var d = CAMP.UNTIL.split("-");
     var w = "日月火水木金土".charAt(new Date(+d[0], d[1] - 1, +d[2]).getDay());
+    return (+d[1]) + "月" + (+d[2]) + "日（" + w + "）";
+  }
+  (function () {
+    if (!campaignOn()) return;
     var b = $("#campaignBanner");
     b.hidden = false;
-    b.textContent = "🎉 " + (+d[1]) + "月" + (+d[2]) + "日（" + w + "）までにこのフォームからお申し込みで、全メニュー" + Math.round(CAMP.RATE * 100) + "%OFF！";
+    b.textContent = "🎉 " + campUntilText() + "までにこのフォームからお申し込みで、全メニュー" + Math.round(CAMP.RATE * 100) + "%OFF！";
   })();
 
   // ---------- エアコン情報（台数分の入力欄） ----------
@@ -196,6 +199,9 @@
     var ps = $(".pop-save", pop);
     ps.hidden = !est.discount;
     ps.textContent = est.discount ? "通常より" + yen(est.discount) + "お得！" : "";
+    var pl = $(".pop-limit", pop);
+    pl.hidden = !est.discount;
+    pl.textContent = est.discount ? "⏰ " + campUntilText() + "までの期間限定 " + Math.round(CAMP.RATE * 100) + "%OFF" : "";
     $(".pop-count", pop).textContent = est.items.length ? "選択中 " + est.items.length + "項目" : "まだ何も選択されていません";
     pop.classList.remove("show");
     void pop.offsetWidth; // アニメーションをやり直す
