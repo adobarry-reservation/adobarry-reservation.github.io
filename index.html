@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ご予約フォーム | アドバリー</title>
-<meta name="description" content="アドバリーのご予約フォーム。エアコン・浴室・洗濯機・ハウスクリーニングの料金を30秒で確認して、そのままWeb予約できます（24時間受付）。">
+<meta name="description" content="アドバリーのご予約フォーム。エアコン・浴室・ハウスクリーニングの料金を30秒で確認して、そのままWeb予約できます（24時間受付）。">
 <link rel="canonical" href="https://adobarry0801-max.github.io/adobarry-reservation/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="アドバリー">
@@ -35,7 +35,6 @@
     <div class="tabs" role="tablist" aria-label="クリーニングメニュー">
       <button type="button" role="tab" class="tab" data-tab="aircon" aria-selected="true"><i>❄️</i>エアコン<span class="tab-count"></span></button>
       <button type="button" role="tab" class="tab" data-tab="bath" aria-selected="false"><i>🛁</i>浴室<span class="tab-count"></span></button>
-      <button type="button" role="tab" class="tab" data-tab="washer" aria-selected="false"><i>🧺</i>洗濯機<span class="tab-count"></span></button>
       <button type="button" role="tab" class="tab" data-tab="house" aria-selected="false"><i>🏠</i>ハウス<span class="tab-count"></span></button>
     </div>
     <p class="tabs-note">複数のメニューを組み合わせてご予約いただけます。合計金額はすべてのメニューの合算です。</p>
@@ -85,18 +84,6 @@
       </section>
     </div>
 
-    <!-- 洗濯機 -->
-    <div class="panel" data-panel="washer" data-cat="洗濯機" role="tabpanel" hidden>
-      <section class="card">
-      <h2>洗濯機クリーニング</h2>
-      <div class="grid">
-        <label class="row"><span class="row-name">縦型洗濯機<small>15,000円／台</small></span><select name="wash_tate" class="qty" data-name="縦型洗濯機" data-price="15000" data-unit="台" data-max="3"></select></label>
-        <label class="row"><span class="row-name">ビートウォッシュ<small>20,000円／台</small></span><select name="wash_beat" class="qty" data-name="ビートウォッシュ" data-price="20000" data-unit="台" data-max="3"></select></label>
-        <label class="row"><span class="row-name">ドラム式洗濯機<small>28,000円／台</small></span><select name="wash_drum" class="qty" data-name="ドラム式洗濯機" data-price="28000" data-unit="台" data-max="3"></select></label>
-      </div>
-      </section>
-    </div>
-
     <!-- ハウス -->
     <div class="panel" data-panel="house" data-cat="ハウス" role="tabpanel" hidden>
       <section class="card">
@@ -106,9 +93,8 @@
         <label class="row"><span class="row-name">キッチン<small>16,800円〜</small></span><select name="h_kitchen" class="qty" data-name="キッチン" data-price="16800" data-unit="箇所" data-max="2" data-from></select></label>
         <label class="row"><span class="row-name">トイレ<small>8,000円</small></span><select name="h_toilet" class="qty" data-name="トイレ" data-price="8000" data-unit="箇所" data-max="3"></select></label>
         <label class="row"><span class="row-name">洗面台<small>8,000円</small></span><select name="h_sink" class="qty" data-name="洗面台" data-price="8000" data-unit="箇所" data-max="3"></select></label>
-        <label class="row"><span class="row-name">床<small>お見積もり</small></span><select name="h_floor" class="qty quote" data-name="床" data-price="0" data-unit="" data-max="1"></select></label>
       </div>
-      <p class="note">※「〜」表記のメニューは表示金額を最低料金として概算計算します。床は別途お見積もりです。</p>
+      <p class="note">※「〜」表記のメニューは表示金額を最低料金として概算計算します。</p>
       </section>
     </div>
 
